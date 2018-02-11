@@ -33,10 +33,17 @@ export default class AutoEnterRunner {
         resolve();
       }
       for (let i = 0; i < funcs.length; i++) {
+        const id = Object.keys(storagedData)[i];
+        const openDate = storagedData[id].openDate;
+        // 自動入場の対象がプログラム かつ 放送時刻を
+        if (requestType === "live" && Date.parse(openDate) > Date.now()) {
+          console.info("Skip: %d/%d", i + 1, length);
+          continue;
+        }
         (() => {
           setTimeout(() => {
             funcs[i].call(null);
-            console.info("Checking... %d/%d", i + 1, length);
+            console.info("Check: %d/%d", i + 1, length);
             if (i === length - 1) {
               setTimeout(resolve, INTERVAL);
             }
