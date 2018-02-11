@@ -65,6 +65,7 @@ export default class Settings extends React.Component {
       "options.showReserved.enable": "disable",
       "options.autoEnter.forceCancel": false,
       "options.popup.enable": "enable",
+      "options.popupOnEnter.enable": "enable",
       "options.playsound.enable": "enable",
       "options.openingNotification.duration": 6,
       "options.playsound.volume": 1.0,
@@ -372,118 +373,155 @@ export default class Settings extends React.Component {
           {(() => {
             if (this.state.selectedMenu == "notification") {
               return (
-                <div className="wrapper">
-                  <h1 className="appicon">通知</h1>
-                  <div className="items">
-                    <div className="item">
-                      <h3>通知を放送開始時に表示する</h3>
-                      <label>
+                <div>
+                  <div className="wrapper">
+                    <h1 className="appicon">放送開始時の通知</h1>
+                    <div className="items">
+                      <div className="item">
+                        <h3>通知を放送開始時に表示する</h3>
+                        <label>
+                          <input
+                            type="radio"
+                            name="options.popup.enable"
+                            value={"enable"}
+                            checked={
+                              this.state["options.popup.enable"] == "enable"
+                            }
+                            onChange={this.onChange}
+                          />{" "}
+                          有効
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="options.popup.enable"
+                            value={"disable"}
+                            checked={
+                              this.state["options.popup.enable"] == "disable"
+                            }
+                            onChange={this.onChange}
+                          />{" "}
+                          無効
+                        </label>
+                      </div>
+                      <div className="item">
+                        <h3>音を放送開始時に鳴らす</h3>
+                        <label>
+                          <input
+                            type="radio"
+                            name="options.playsound.enable"
+                            value={"enable"}
+                            checked={
+                              this.state["options.playsound.enable"] == "enable"
+                            }
+                            onChange={this.onChange}
+                          />{" "}
+                          有効
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="options.playsound.enable"
+                            value={"disable"}
+                            checked={
+                              this.state["options.playsound.enable"] ==
+                              "disable"
+                            }
+                            onChange={this.onChange}
+                          />{" "}
+                          無効
+                        </label>
+                      </div>
+                      <div className="item">
+                        <h3>通知の表示位置</h3>
+                        <p className="note" style={{ fontSize: "13px" }}>
+                          Google Chrome の仕様上変更できません．
+                        </p>
+                      </div>
+                      <div className="item">
+                        <h3>「放送開始のお知らせ」通知の表示時間</h3>
                         <input
-                          type="radio"
-                          name="options.popup.enable"
-                          value={"enable"}
-                          checked={
-                            this.state["options.popup.enable"] == "enable"
+                          type="range"
+                          name="options.openingNotification.duration"
+                          value={
+                            this.state["options.openingNotification.duration"]
                           }
+                          min="0"
+                          max="20"
+                          step="1"
                           onChange={this.onChange}
-                        />{" "}
-                        有効
-                      </label>
-                      <label>
+                        />
+                        <span id="openingNotification.duration">
+                          {this.state["options.openingNotification.duration"]}秒
+                        </span>
+                      </div>
+                      <div className="item">
+                        <h3>通知音</h3>
+                        <p
+                          className="note green"
+                          style={{ marginBottom: "0.6em" }}
+                        >
+                          選択するとサンプル音が鳴ります
+                        </p>
+                        <select
+                          name="options.soundfile"
+                          onChange={this.onChange}
+                          value={this.state["options.soundfile"]}
+                        >
+                          {this.state.selectableList.soundFiles.map(d => (
+                            <option value={d.path}>{d.text}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="item">
+                        <h3>通知音のボリューム</h3>
                         <input
-                          type="radio"
-                          name="options.popup.enable"
-                          value={"disable"}
-                          checked={
-                            this.state["options.popup.enable"] == "disable"
-                          }
+                          type="range"
+                          name="options.playsound.volume"
+                          value={this.state["options.playsound.volume"]}
+                          min="0.0"
+                          max="1.0"
+                          step="0.1"
                           onChange={this.onChange}
-                        />{" "}
-                        無効
-                      </label>
+                        />
+                        <button className="soundtest" onClick={this.playSound}>
+                          音量テスト
+                        </button>
+                      </div>
                     </div>
-                    <div className="item">
-                      <h3>音を放送開始時に鳴らす</h3>
-                      <label>
-                        <input
-                          type="radio"
-                          name="options.playsound.enable"
-                          value={"enable"}
-                          checked={
-                            this.state["options.playsound.enable"] == "enable"
-                          }
-                          onChange={this.onChange}
-                        />{" "}
-                        有効
-                      </label>
-                      <label>
-                        <input
-                          type="radio"
-                          name="options.playsound.enable"
-                          value={"disable"}
-                          checked={
-                            this.state["options.playsound.enable"] == "disable"
-                          }
-                          onChange={this.onChange}
-                        />{" "}
-                        無効
-                      </label>
-                    </div>
-                    <div className="item">
-                      <h3>通知の表示位置</h3>
-                      <p className="note" style={{ fontSize: "13px" }}>
-                        Google Chrome の仕様上変更できません．
-                      </p>
-                    </div>
-                    <div className="item">
-                      <h3>「放送開始のお知らせ」通知の表示時間</h3>
-                      <input
-                        type="range"
-                        name="options.openingNotification.duration"
-                        value={
-                          this.state["options.openingNotification.duration"]
-                        }
-                        min="0"
-                        max="20"
-                        step="1"
-                        onChange={this.onChange}
-                      />
-                      <span id="openingNotification.duration">
-                        {this.state["options.openingNotification.duration"]}秒
-                      </span>
-                    </div>
-                    <div className="item">
-                      <h3>通知音</h3>
-                      <p
-                        className="note green"
-                        style={{ marginBottom: "0.6em" }}
-                      >
-                        選択するとサンプル音が鳴ります
-                      </p>
-                      <select
-                        name="options.soundfile"
-                        onChange={this.onChange}
-                        value={this.state["options.soundfile"]}
-                      >
-                        {this.state.selectableList.soundFiles.map(d => (
-                          <option value={d.path}>{d.text}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="item">
-                      <h3>通知音のボリューム</h3>
-                      <input
-                        type="range"
-                        name="options.playsound.volume"
-                        value={this.state["options.playsound.volume"]}
-                        min="0.0"
-                        max="1.0"
-                        step="0.1"
-                        onChange={this.onChange}
-                      />
-                      <button className="soundtest" onClick={this.playSound}>
-                        音量テスト
-                      </button>
+                  </div>
+                  <div className="wrapper" style={{ marginTop: "20px" }}>
+                    <h1 className="appicon">自動入場時の通知</h1>
+                    <div className="items">
+                      <div className="item">
+                        <h3>通知を自動入場時に表示する</h3>
+                        <label>
+                          <input
+                            type="radio"
+                            name="options.popupOnEnter.enable"
+                            value={"enable"}
+                            checked={
+                              this.state["options.popupOnEnter.enable"] ==
+                              "enable"
+                            }
+                            onChange={this.onChange}
+                          />{" "}
+                          有効
+                        </label>
+                        <label>
+                          <input
+                            type="radio"
+                            name="options.popupOnEnter.enable"
+                            value={"disable"}
+                            checked={
+                              this.state["options.popupOnEnter.enable"] ==
+                              "disable"
+                            }
+                            onChange={this.onChange}
+                          />{" "}
+                          無効
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>

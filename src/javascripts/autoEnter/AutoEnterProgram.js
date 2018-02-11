@@ -15,13 +15,17 @@ export default class AutoEnterProgram {
             if (store.get(_listKey)) {
               storagedData = store.get(_listKey);
             }
-            const options = {
-              type: "basic",
-              title: _notificationTitle,
-              message: storagedData[id].title,
-              iconUrl: storagedData[id].thumbnail
-            };
-            chrome.notifications.create(id, options);
+            // 通知表示
+            const notificationOption = store.get("options.popupOnEnter.enable");
+            if (notificationOption == null || notificationOption === "enable") {
+              const options = {
+                type: "basic",
+                title: _notificationTitle,
+                message: storagedData[id].title,
+                iconUrl: storagedData[id].thumbnail
+              };
+              chrome.notifications.create(id, options);
+            }
             console.info(
               `[nicosapo] Delete storagedData[${id}] `,
               storagedData[id]

@@ -14,7 +14,11 @@ const _move = (storagedData, id) => {
       message: storagedData[id].title,
       iconUrl: storagedData[id].thumbnail
     };
-    chrome.notifications.create(id, options);
+    // 通知表示
+    const notificationOption = store.get("options.popupOnEnter.enable");
+    if (notificationOption == null || notificationOption === "enable") {
+      chrome.notifications.create(id, options);
+    }
   });
 };
 
@@ -41,19 +45,30 @@ export default class AutoEnterCommunity {
                 );
                 if (response) {
                   console.log("ignore");
-                  const communityData = store.get("autoEnterCommunityList")[id];
-                  const options = {
-                    body: `自動入場をキャンセルしました．この放送を開いている自動次枠移動が ON のタブがあります．`,
-                    icon: communityData.thumbnail
-                  };
-                  const notification = new Notification(
-                    communityData.title,
-                    options
+                  // 通知表示
+                  const notificationOption = store.get(
+                    "options.popupOnEnter.enable"
                   );
-                  notification.onclick = () => {
-                    chrome.tabs.update(Number(tabId), { active: true });
-                  };
-                  store.set(_listKey, storagedData);
+                  if (
+                    notificationOption == null ||
+                    notificationOption === "enable"
+                  ) {
+                    const communityData = store.get("autoEnterCommunityList")[
+                      id
+                    ];
+                    const options = {
+                      body: `自動入場をキャンセルしました．この放送を開いている自動次枠移動が ON のタブがあります．`,
+                      icon: communityData.thumbnail
+                    };
+                    const notification = new Notification(
+                      communityData.title,
+                      options
+                    );
+                    notification.onclick = () => {
+                      chrome.tabs.update(Number(tabId), { active: true });
+                    };
+                    store.set(_listKey, storagedData);
+                  }
                 } else {
                   _move(storagedData, id);
                 }
