@@ -31,7 +31,8 @@
     "http://live2.nicovideo.jp/",
     "http://live.nicovideo.jp/gate/",
     "http://api.search.nicovideo.jp/",
-    "http://sp.live.nicovideo.jp/"
+    "http://sp.live.nicovideo.jp/",
+    "http://sp.live2.nicovideo.jp/"
   ],
   "background": {
     "scripts": ["javascripts/background.js"]

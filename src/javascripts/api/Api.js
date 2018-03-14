@@ -45,17 +45,24 @@ export default class Api {
     return new Promise((resolve, reject) => {
       const url = "http://sp.live.nicovideo.jp/api/favorite?firstStreamNum=1&streamMany=100&streamType=all";
 
-      // axios.get("http://live.nicovideo.jp/my");
+      axios.get("http://live.nicovideo.jp/my");
+      axios.get("http://sp.live2.nicovideo.jp/favorites");
 
       axios
         .get(url)
         .then(response => {
-          let favoriteStreams = response.data.favoriteStreams;
-          favoriteStreams = favoriteStreams.map(stream => {
-            stream.is_reserved = stream.start_time * 1000 > Date.now();
+          // let favoriteStreams = response.data.favoriteStreams;
+          const parser = new DOMParser();
+          const html = parser.parseFromString(response.data, "text/html");
+          let streams = html.querySelectorAll("[class^=___program-card___]");
+          streams = [...streams].map(stream => {
+            const onairLabel = stream.querySelectorAll("[class^=___status___]");
+            if (onairLabel) {
+              stream.is_reserved = true;
+            }
             return stream;
           });
-          const videoInfoList = favoriteStreams.map(stream => VIParser.parse(stream));
+          const videoInfoList = streams.map(stream => VIParser.parse(stream));
           resolve(videoInfoList);
         })
         .catch(error => {
